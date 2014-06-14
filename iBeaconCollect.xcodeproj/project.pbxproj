@@ -22,6 +22,11 @@
 		EE9E01A3194AE86800CCF42F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9E0182194AE86800CCF42F /* UIKit.framework */; };
 		EE9E01AB194AE86800CCF42F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EE9E01A9194AE86800CCF42F /* InfoPlist.strings */; };
 		EE9E01AD194AE86800CCF42F /* iBeaconCollectTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EE9E01AC194AE86800CCF42F /* iBeaconCollectTests.m */; };
+		EE9E01B9194BCE8C00CCF42F /* Utility.m in Sources */ = {isa = PBXBuildFile; fileRef = EE9E01B8194BCE8C00CCF42F /* Utility.m */; };
+		EE9E01BC194BDB3900CCF42F /* LazyFileUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = EE9E01BB194BDB3900CCF42F /* LazyFileUploader.m */; };
+		EE9E01C0194BFEEA00CCF42F /* ib2Icon_29@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EE9E01BD194BFEEA00CCF42F /* ib2Icon_29@2x.png */; };
+		EE9E01C1194BFEEA00CCF42F /* ib2Icon_40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EE9E01BE194BFEEA00CCF42F /* ib2Icon_40@2x.png */; };
+		EE9E01C2194BFEEA00CCF42F /* ib2Icon_60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EE9E01BF194BFEEA00CCF42F /* ib2Icon_60@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +60,13 @@
 		EE9E01A8194AE86800CCF42F /* iBeaconCollectTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iBeaconCollectTests-Info.plist"; sourceTree = "<group>"; };
 		EE9E01AA194AE86800CCF42F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		EE9E01AC194AE86800CCF42F /* iBeaconCollectTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iBeaconCollectTests.m; sourceTree = "<group>"; };
+		EE9E01B7194BCE8C00CCF42F /* Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Utility.h; sourceTree = "<group>"; };
+		EE9E01B8194BCE8C00CCF42F /* Utility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utility.m; sourceTree = "<group>"; };
+		EE9E01BA194BDB3900CCF42F /* LazyFileUploader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LazyFileUploader.h; sourceTree = "<group>"; };
+		EE9E01BB194BDB3900CCF42F /* LazyFileUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LazyFileUploader.m; sourceTree = "<group>"; };
+		EE9E01BD194BFEEA00CCF42F /* ib2Icon_29@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ib2Icon_29@2x.png"; sourceTree = "<group>"; };
+		EE9E01BE194BFEEA00CCF42F /* ib2Icon_40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ib2Icon_40@2x.png"; sourceTree = "<group>"; };
+		EE9E01BF194BFEEA00CCF42F /* ib2Icon_60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ib2Icon_60@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +96,9 @@
 		EE9E0172194AE86800CCF42F = {
 			isa = PBXGroup;
 			children = (
+				EE9E01BD194BFEEA00CCF42F /* ib2Icon_29@2x.png */,
+				EE9E01BE194BFEEA00CCF42F /* ib2Icon_40@2x.png */,
+				EE9E01BF194BFEEA00CCF42F /* ib2Icon_60@2x.png */,
 				EE9E0184194AE86800CCF42F /* iBeaconCollect */,
 				EE9E01A6194AE86800CCF42F /* iBeaconCollectTests */,
 				EE9E017D194AE86800CCF42F /* Frameworks */,
@@ -120,6 +135,10 @@
 				EE9E0193194AE86800CCF42F /* Main_iPad.storyboard */,
 				EE9E0196194AE86800CCF42F /* SpriteKitViewController.h */,
 				EE9E0197194AE86800CCF42F /* SpriteKitViewController.m */,
+				EE9E01BA194BDB3900CCF42F /* LazyFileUploader.h */,
+				EE9E01BB194BDB3900CCF42F /* LazyFileUploader.m */,
+				EE9E01B7194BCE8C00CCF42F /* Utility.h */,
+				EE9E01B8194BCE8C00CCF42F /* Utility.m */,
 				EE9E0199194AE86800CCF42F /* Images.xcassets */,
 				EE9E0185194AE86800CCF42F /* Supporting Files */,
 			);
@@ -233,8 +252,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE9E0195194AE86800CCF42F /* Main_iPad.storyboard in Resources */,
+				EE9E01C1194BFEEA00CCF42F /* ib2Icon_40@2x.png in Resources */,
 				EE9E019A194AE86800CCF42F /* Images.xcassets in Resources */,
 				EE9E0192194AE86800CCF42F /* Main_iPhone.storyboard in Resources */,
+				EE9E01C2194BFEEA00CCF42F /* ib2Icon_60@2x.png in Resources */,
+				EE9E01C0194BFEEA00CCF42F /* ib2Icon_29@2x.png in Resources */,
 				EE9E0189194AE86800CCF42F /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -254,9 +276,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE9E01B9194BCE8C00CCF42F /* Utility.m in Sources */,
 				EE9E018F194AE86800CCF42F /* SpriteKitAppDelegate.m in Sources */,
 				EE9E018B194AE86800CCF42F /* main.m in Sources */,
 				EE9E0198194AE86800CCF42F /* SpriteKitViewController.m in Sources */,
+				EE9E01BC194BDB3900CCF42F /* LazyFileUploader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,6 +418,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iBeaconCollect/iBeaconCollect-Prefix.pch";
 				INFOPLIST_FILE = "iBeaconCollect/iBeaconCollect-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -407,6 +432,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iBeaconCollect/iBeaconCollect-Prefix.pch";
 				INFOPLIST_FILE = "iBeaconCollect/iBeaconCollect-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -471,6 +497,7 @@
 				EE9E01B2194AE86800CCF42F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		EE9E01B3194AE86800CCF42F /* Build configuration list for PBXNativeTarget "iBeaconCollectTests" */ = {
 			isa = XCConfigurationList;
@@ -479,6 +506,7 @@
 				EE9E01B5194AE86800CCF42F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
