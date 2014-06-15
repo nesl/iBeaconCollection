@@ -8,7 +8,7 @@
 
 #import "SpriteKitViewController.h"
 
-NSString *ip = @"http://172.17.5.61:8888";
+NSString *ip = @"http://18.111.26.215:8888";
 
 @interface SpriteKitViewController () {
     UILabel *labelRxUuid[10];
@@ -45,6 +45,8 @@ NSString *ip = @"http://172.17.5.61:8888";
     NSMutableData *responseDataUpdate;
     
     BOOL successfullyConnectBefore;
+    UIColor *colorWorking;
+    UIColor *colorNonworking;
 }
 
 @end
@@ -55,6 +57,8 @@ NSString *ip = @"http://172.17.5.61:8888";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    colorWorking = [UIColor blackColor];
+    colorNonworking = [UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1.0];
     [self labelIndex];
     [self showTxRxInfoAlpha:0.0];
     labelLastUpdate.text = @"Last update: --";
@@ -170,12 +174,14 @@ NSString *ip = @"http://172.17.5.61:8888";
         if (txenabled == true) {
             txenabled = false;
             [buttonTxEnable setTitle:@"Enabled" forState:UIControlStateNormal];
+            [self showTxInfoColor:colorNonworking];
             [self stopBroadcast];
         }
         else {
             txenabled = true;
             [buttonTxEnable setTitle:@"Disabled" forState:UIControlStateNormal];
             [self startBroadcast];
+            [self showTxInfoColor:colorWorking];
         }
     }
 }
@@ -185,6 +191,7 @@ NSString *ip = @"http://172.17.5.61:8888";
         if (rxenabled == true) {
             rxenabled = false;
             [buttonRxEnable setTitle:@"Enabled" forState:UIControlStateNormal];
+            [self showRxInfoColor:colorNonworking];
             for (int i = 0; i < rxNr; i++) {
                 [locationManager stopMonitoringForRegion:rxbeaconRegions[i]];
                 [locationManager stopRangingBeaconsInRegion:rxbeaconRegions[i]];
@@ -193,6 +200,7 @@ NSString *ip = @"http://172.17.5.61:8888";
         else {
             rxenabled = true;
             [buttonRxEnable setTitle:@"Disabled" forState:UIControlStateNormal];
+            [self showRxInfoColor:colorWorking];
             for (int i = 0; i < rxNr; i++) {
                 [locationManager startMonitoringForRegion:rxbeaconRegions[i]];
                 [locationManager startRangingBeaconsInRegion:rxbeaconRegions[i]];
@@ -575,6 +583,33 @@ NSString *ip = @"http://172.17.5.61:8888";
     buttonTxEnable.alpha = alpha;
     buttonRxEnable.alpha = alpha;
     buttonUpload.alpha = alpha;
+}
+
+- (void)showTxInfoColor:(UIColor*)color {
+    //labelTxLInfo.textColor = color;
+    labelTxLUuid.textColor = color;
+    labelTxUuid.textColor = color;
+    labelTxLMajor.textColor = color;
+    labelTxMajor.textColor = color;
+    labelTxLMinor.textColor = color;
+    labelTxMinor.textColor = color;
+}
+
+- (void)showRxInfoColor:(UIColor*)color {
+    //labelRxLInfo.textColor = color;
+    labelRxLMaj.textColor = color;
+    labelRxLMin.textColor = color;
+    labelRxLIn.textColor = color;
+    labelRxLOut.textColor = color;
+    labelRxLCnt.textColor = color;
+    for (int i = 0; i < 10; i++) {
+        labelRxUuid[i].textColor = color;
+        labelRxMajor[i].textColor = color;
+        labelRxMinor[i].textColor = color;
+        labelRxIn[i].textColor = color;
+        labelRxOut[i].textColor = color;
+        labelRxCnt[i].textColor = color;
+    }
 }
 
 @end
