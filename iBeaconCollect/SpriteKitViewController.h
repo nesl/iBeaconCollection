@@ -98,6 +98,8 @@
     IBOutlet UILabel *labelRxCnt8;
     IBOutlet UILabel *labelRxCnt9;
     
+    IBOutlet UILabel *labelLAutoUpload;
+    IBOutlet UISwitch *switchAutoUpload;
     IBOutlet UIButton *buttonUpload;
     IBOutlet UILabel *labelUploadStatus;
 }

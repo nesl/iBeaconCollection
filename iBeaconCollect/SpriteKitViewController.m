@@ -8,7 +8,7 @@
 
 #import "SpriteKitViewController.h"
 
-NSString *ip = @"http://18.111.26.215:8888";
+NSString *ip = @"http://192.168.8.190:8888";
 
 @interface SpriteKitViewController () {
     UILabel *labelRxUuid[10];
@@ -47,6 +47,8 @@ NSString *ip = @"http://18.111.26.215:8888";
     BOOL successfullyConnectBefore;
     UIColor *colorWorking;
     UIColor *colorNonworking;
+    
+    NSTimer *timerAutoUpload;
 }
 
 @end
@@ -209,16 +211,43 @@ NSString *ip = @"http://18.111.26.215:8888";
     }
 }
 
+- (IBAction)switchAutoUploadToggle: (id) sender {
+    if (switchAutoUpload.on) {
+        buttonUpload.alpha = 0.0;
+        timerAutoUpload = [NSTimer scheduledTimerWithTimeInterval:300
+                                                           target:self
+                                                         selector:@selector(uploadData:)
+                                                         userInfo:nil
+                                                          repeats:YES];
+    }
+    else {
+        buttonUpload.alpha = 1.0;
+        [timerAutoUpload invalidate];
+    }
+}
+
 - (IBAction)buttonUploadTouchDown:(id)sender {
     [buttonUpload setEnabled:NO];
+    [self uploadData];
+}
+
+- (void)uploadData {
+    [self uploadData:nil];
+}
+
+- (void)uploadData:(NSTimer*)timer {
     labelUploadStatus.text = @"uploading...";
     NSString *url = [[NSString alloc] initWithFormat:@"%@/u%@", ip, textDeviceID.text];
     [LazyFileUploader uploadFile:@"log" urlString:url  formFilename:textDeviceID.text callback:^(BOOL result) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (result)
+            if (result) {
+                labelUploadStatus.textColor = [UIColor blackColor];
                 labelUploadStatus.text = [[NSString alloc] initWithFormat:@"Upload successfully at %@", [dateFormatter stringFromDate:[NSDate date]]];
-            else
-                labelUploadStatus.text = @"Upload failed";
+            }
+            else {
+                labelUploadStatus.textColor = [UIColor redColor];
+                labelUploadStatus.text = [[NSString alloc] initWithFormat:@"Upload failed at %@", [dateFormatter stringFromDate:[NSDate date]]];
+            }
             [buttonUpload setEnabled:YES];
         });
     }];
@@ -582,6 +611,8 @@ NSString *ip = @"http://18.111.26.215:8888";
     labelRxLCnt.alpha = alpha;
     buttonTxEnable.alpha = alpha;
     buttonRxEnable.alpha = alpha;
+    labelLAutoUpload.alpha = alpha;
+    switchAutoUpload.alpha = alpha;
     buttonUpload.alpha = alpha;
 }
 
