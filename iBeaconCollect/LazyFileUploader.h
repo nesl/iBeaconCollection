@@ -12,6 +12,6 @@
 
 @interface LazyFileUploader : NSObject
 
-+ (void)uploadFile:(NSString*)filename urlString:(NSString*)urlString formFilename:(NSString*)formFilename callback:(void (^)(BOOL result))callback;
++ (void)uploadFile:(NSString*)filename urlString:(NSString*)urlString callback:(void (^)(BOOL result))callback;
 
 @end

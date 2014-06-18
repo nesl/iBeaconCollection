@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EE228CB2194F743200475240 /* DataLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = EE228CB1194F743200475240 /* DataLogger.m */; };
+		EE228CB5194FC2BD00475240 /* UploadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EE228CB4194FC2BD00475240 /* UploadManager.m */; };
 		EE9E017F194AE86800CCF42F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9E017E194AE86800CCF42F /* Foundation.framework */; };
 		EE9E0181194AE86800CCF42F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9E0180194AE86800CCF42F /* CoreGraphics.framework */; };
 		EE9E0183194AE86800CCF42F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9E0182194AE86800CCF42F /* UIKit.framework */; };
@@ -40,6 +42,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EE228CB0194F743200475240 /* DataLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataLogger.h; sourceTree = "<group>"; };
+		EE228CB1194F743200475240 /* DataLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataLogger.m; sourceTree = "<group>"; };
+		EE228CB3194FC2BD00475240 /* UploadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadManager.h; sourceTree = "<group>"; };
+		EE228CB4194FC2BD00475240 /* UploadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploadManager.m; sourceTree = "<group>"; };
 		EE9E017B194AE86800CCF42F /* iBeaconCollect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iBeaconCollect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9E017E194AE86800CCF42F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		EE9E0180194AE86800CCF42F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -135,6 +141,10 @@
 				EE9E0193194AE86800CCF42F /* Main_iPad.storyboard */,
 				EE9E0196194AE86800CCF42F /* SpriteKitViewController.h */,
 				EE9E0197194AE86800CCF42F /* SpriteKitViewController.m */,
+				EE228CB3194FC2BD00475240 /* UploadManager.h */,
+				EE228CB4194FC2BD00475240 /* UploadManager.m */,
+				EE228CB0194F743200475240 /* DataLogger.h */,
+				EE228CB1194F743200475240 /* DataLogger.m */,
 				EE9E01BA194BDB3900CCF42F /* LazyFileUploader.h */,
 				EE9E01BB194BDB3900CCF42F /* LazyFileUploader.m */,
 				EE9E01B7194BCE8C00CCF42F /* Utility.h */,
@@ -281,6 +291,8 @@
 				EE9E018B194AE86800CCF42F /* main.m in Sources */,
 				EE9E0198194AE86800CCF42F /* SpriteKitViewController.m in Sources */,
 				EE9E01BC194BDB3900CCF42F /* LazyFileUploader.m in Sources */,
+				EE228CB5194FC2BD00475240 /* UploadManager.m in Sources */,
+				EE228CB2194F743200475240 /* DataLogger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

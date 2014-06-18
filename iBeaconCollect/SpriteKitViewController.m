@@ -8,7 +8,7 @@
 
 #import "SpriteKitViewController.h"
 
-NSString *ip = @"http://192.168.8.190:8888";
+NSString *ip = @"http://192.168.43.89:8888";
 
 @interface SpriteKitViewController () {
     UILabel *labelRxUuid[10];
@@ -20,7 +20,7 @@ NSString *ip = @"http://192.168.8.190:8888";
     
     CLLocationManager *locationManager;
     CBPeripheralManager *peripheralManager;
-    NSDateFormatter *dateFormatter;
+    NSDateFormatter *dateFormatterScreen;
     
     NSString *txuuid;
     int txmajor;
@@ -40,15 +40,12 @@ NSString *ip = @"http://192.168.8.190:8888";
     int rxNr;
     BOOL rxenabled;
     
-    FILE *flog;
     NSURLConnection *connectionUpdate;
     NSMutableData *responseDataUpdate;
     
     BOOL successfullyConnectBefore;
     UIColor *colorWorking;
     UIColor *colorNonworking;
-    
-    NSTimer *timerAutoUpload;
 }
 
 @end
@@ -72,11 +69,10 @@ NSString *ip = @"http://192.168.8.190:8888";
     rxenabled = true;
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
-    dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"MM/dd HH:mm:ss"];
+    dateFormatterScreen = [[NSDateFormatter alloc] init];
+    [dateFormatterScreen setDateFormat:@"MM/dd HH:mm:ss"];
     textDeviceID.keyboardType = UIKeyboardTypeNumberPad;
 	successfullyConnectBefore = false;
-    flog = iosfopen("log", "a");
 }
 
 - (void)didReceiveMemoryWarning
@@ -109,13 +105,11 @@ NSString *ip = @"http://192.168.8.190:8888";
         int d;
         switch (beacon.proximity) {
             case CLProximityImmediate:  d = 0;   break;
-            case CLProximityNear:       d = 0;   break;
-            case CLProximityFar:        d = 0;   break;
+            case CLProximityNear:       d = 1;   break;
+            case CLProximityFar:        d = 2;   break;
             default:                    d = -1;
         }
-        NSString *str = [[NSString alloc] initWithFormat:@"%lf 2 %@ %@ %@ %f %zi %d", [NSDate timeIntervalSinceReferenceDate], beacon.proximityUUID.UUIDString, beacon.major, beacon.minor, beacon.accuracy, beacon.rssi, d];
-        fprintf(flog, "%s\n", [str UTF8String]);
-        fflush(flog);
+        [DataLogger putLine:[[NSString alloc] initWithFormat:@"%lf,2,%@,%@,%@,%f,%zi,%d", [NSDate timeIntervalSinceReferenceDate], beacon.proximityUUID.UUIDString, beacon.major, beacon.minor, beacon.accuracy, beacon.rssi, d]];
     }
 
 }
@@ -129,9 +123,7 @@ NSString *ip = @"http://192.168.8.190:8888";
             labelRxIn[i].text = [[NSString alloc] initWithFormat:@"%d", rxIn[i]];
         }
     }
-    NSString *str = [[NSString alloc] initWithFormat:@"%lf 0 %@", [NSDate timeIntervalSinceReferenceDate], region.identifier];
-    fprintf(flog, "%s\n", [str UTF8String]);
-    fflush(flog);
+   [DataLogger putLine:[[NSString alloc] initWithFormat:@"%lf,0,%@,0,0,0,0,0", [NSDate timeIntervalSinceReferenceDate], region.identifier]];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region {
@@ -142,9 +134,7 @@ NSString *ip = @"http://192.168.8.190:8888";
             labelRxOut[i].text = [[NSString alloc] initWithFormat:@"%d", rxOut[i]];
         }
     }
-    NSString *str = [[NSString alloc] initWithFormat:@"%lf 1 %@", [NSDate timeIntervalSinceReferenceDate], region.identifier];
-    fprintf(flog, "%s\n", [str UTF8String]);
-    fflush(flog);
+    [DataLogger putLine:[[NSString alloc] initWithFormat:@"%lf,1,%@,0,0,0,0,0", [NSDate timeIntervalSinceReferenceDate], region.identifier]];
 }
 
 - (void)startBroadcast {
@@ -166,9 +156,15 @@ NSString *ip = @"http://192.168.8.190:8888";
 
 - (IBAction)buttonConnectionTouchDown:(id)sender {
     [self.view endEditing:YES];
-    NSString *url = [[NSString alloc] initWithFormat:@"%@/c%@", ip, textDeviceID.text];
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
-    connectionUpdate = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+    if ([textDeviceID.text isEqualToString:@""])
+        [self changeLabelErrorMessage:@"DeviceID cannot be empty"];
+    else {
+        [buttonConnect setEnabled:NO];
+        [textDeviceID setEnabled:NO];
+        NSString *url = [[NSString alloc] initWithFormat:@"%@/c%@", ip, textDeviceID.text];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+        connectionUpdate = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+    }
 }
 
 - (IBAction)buttonTxEnableTouchDown:(id)sender {
@@ -212,45 +208,17 @@ NSString *ip = @"http://192.168.8.190:8888";
 }
 
 - (IBAction)switchAutoUploadToggle: (id) sender {
-    if (switchAutoUpload.on) {
+    [UploadManager setUploadModeAutomatically:switchAutoUpload.on];
+    if (switchAutoUpload.on)
         buttonUpload.alpha = 0.0;
-        timerAutoUpload = [NSTimer scheduledTimerWithTimeInterval:300
-                                                           target:self
-                                                         selector:@selector(uploadData:)
-                                                         userInfo:nil
-                                                          repeats:YES];
-    }
-    else {
+    else
         buttonUpload.alpha = 1.0;
-        [timerAutoUpload invalidate];
-    }
 }
 
 - (IBAction)buttonUploadTouchDown:(id)sender {
+    NSLog(@"button upload touch down");
     [buttonUpload setEnabled:NO];
-    [self uploadData];
-}
-
-- (void)uploadData {
-    [self uploadData:nil];
-}
-
-- (void)uploadData:(NSTimer*)timer {
-    labelUploadStatus.text = @"uploading...";
-    NSString *url = [[NSString alloc] initWithFormat:@"%@/u%@", ip, textDeviceID.text];
-    [LazyFileUploader uploadFile:@"log" urlString:url  formFilename:textDeviceID.text callback:^(BOOL result) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (result) {
-                labelUploadStatus.textColor = [UIColor blackColor];
-                labelUploadStatus.text = [[NSString alloc] initWithFormat:@"Upload successfully at %@", [dateFormatter stringFromDate:[NSDate date]]];
-            }
-            else {
-                labelUploadStatus.textColor = [UIColor redColor];
-                labelUploadStatus.text = [[NSString alloc] initWithFormat:@"Upload failed at %@", [dateFormatter stringFromDate:[NSDate date]]];
-            }
-            [buttonUpload setEnabled:YES];
-        });
-    }];
+    [UploadManager uploadNow];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
@@ -277,11 +245,11 @@ NSString *ip = @"http://192.168.8.190:8888";
             line = nil;
             [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&line];
             if (line == nil) {
-                [self changeLabelErrorMessage:@"expect tx.uuid in line 1"];
+                [self connectionUpdateEndWithErrorMessage:@"expect tx.uuid in line 1"];
                 return;
             }
             if ([line isEqualToString:@"failed"]) {
-                [self changeLabelErrorMessage:@"no such configuration file"];
+                [self connectionUpdateEndWithErrorMessage:@"no such configuration file"];
                 return;
             }
             hotxuuid = [[line uppercaseString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -292,12 +260,12 @@ NSString *ip = @"http://192.168.8.190:8888";
             line = nil;
             [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&line];
             if (line == nil) {
-                [self changeLabelErrorMessage:@"expect tx.major in line 2"];
+                [self connectionUpdateEndWithErrorMessage:@"expect tx.major in line 2"];
                 return;
             }
             hotxmajor = [line intValue];
             if (hotxmajor == 0) {
-                [self changeLabelErrorMessage:@"tx.major is zero or invalid"];
+                [self connectionUpdateEndWithErrorMessage:@"tx.major is zero or invalid"];
                 return;
             }
             NSLog(@"%d", hotxmajor);
@@ -307,12 +275,12 @@ NSString *ip = @"http://192.168.8.190:8888";
             line = nil;
             [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&line];
             if (line == nil) {
-                [self changeLabelErrorMessage:@"expect tx.minor in line 3"];
+                [self connectionUpdateEndWithErrorMessage:@"expect tx.minor in line 3"];
                 return;
             }
             hotxminor = [line intValue];
             if (hotxminor == 0) {
-                [self changeLabelErrorMessage:@"tx.minor is zero or invalid"];
+                [self connectionUpdateEndWithErrorMessage:@"tx.minor is zero or invalid"];
                 return;
             }
             NSLog(@"%d", hotxminor);
@@ -442,21 +410,38 @@ NSString *ip = @"http://192.168.8.190:8888";
                     labelRxCnt[i].text = @"";
                 }
             }
-            
-            if (successfullyConnectBefore == false) {
-                buttonConnect.alpha = 0.0;
-                [textDeviceID setEnabled:NO];
-                [self showTxRxInfoAlpha:1.0];
-                successfullyConnectBefore = true;
-                [NSTimer scheduledTimerWithTimeInterval:15
-                                                 target:self
-                                               selector:@selector(reloadConfigurationFile:)
-                                               userInfo:nil
-                                                repeats:YES];
-            }
-            [self changeLabelErrorMessage:nil];
+            [self connectionUpdateEndWithErrorMessage:nil];
         }
     }
+}
+
+- (void)connectionUpdateEndWithErrorMessage:(NSString*)message {
+    //NSLog(@"end 0");
+    if (successfullyConnectBefore == false) {
+        if (message != nil) {
+            //NSLog(@"end 1");
+            [textDeviceID setEnabled:YES];
+            [buttonConnect setEnabled:YES];
+        }
+        else {
+            buttonConnect.alpha = 0.0;
+            [textDeviceID setEnabled:NO];
+            [self showTxRxInfoAlpha:1.0];
+            successfullyConnectBefore = true;
+            [DataLogger globalInit:textDeviceID.text];
+            //NSLog(@"end 2 %@", textDeviceID.text);
+            [NSTimer scheduledTimerWithTimeInterval:15
+                                             target:self
+                                           selector:@selector(reloadConfigurationFile:)
+                                           userInfo:nil
+                                            repeats:YES];
+            NSString *url = [[NSString alloc] initWithFormat:@"%@/u", ip];
+            //NSLog(@"end 2.2");
+            [self initializeUploadManagerPrefix:url];
+            //NSLog(@"end 2.3");
+        }
+    }
+    [self changeLabelErrorMessage:message];
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
@@ -464,6 +449,8 @@ NSString *ip = @"http://192.168.8.190:8888";
     NSLog([NSString stringWithFormat:@"Connection failed: %@", [error description]]);
     if (connection == connectionUpdate) {
         [self changeLabelErrorMessage:@"network connection error"];
+        [buttonConnect setEnabled:YES];
+        [textDeviceID setEnabled:YES];
     }
 }
 
@@ -473,12 +460,12 @@ NSString *ip = @"http://192.168.8.190:8888";
 
 - (void)changeLabelErrorMessage:(NSString*)msg {
     if (msg == nil) {
-        labelLastUpdate.text = [[NSString alloc] initWithFormat:@"Last update: %@", [dateFormatter stringFromDate:[NSDate date]]];
+        labelLastUpdate.text = [[NSString alloc] initWithFormat:@"Last update: %@", [dateFormatterScreen stringFromDate:[NSDate date]]];
         labelLastConnection.text = @"";
         labelConnectionErrorMessage.text = @"";
     }
     else {
-        labelLastConnection.text = [[NSString alloc] initWithFormat:@"Last connection: %@", [dateFormatter stringFromDate:[NSDate date]]];
+        labelLastConnection.text = [[NSString alloc] initWithFormat:@"Last connection: %@", [dateFormatterScreen stringFromDate:[NSDate date]]];
         labelConnectionErrorMessage.text = [[NSString alloc] initWithFormat:@"Error: %@", msg];
     }
 }
@@ -496,21 +483,42 @@ NSString *ip = @"http://192.168.8.190:8888";
     connectionUpdate = [[NSURLConnection alloc] initWithRequest:request delegate:self];
 }
 
-/*
-- (IBAction)b1:(id)sender {
-    [self startBroadcast];
+- (void)initializeUploadManagerPrefix:(NSString*)prefix {
+    [UploadManager globalInitWithIpPortPrefix:prefix];
+    [UploadManager addUploadWillStartBlock:^(int nrToUpload) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [buttonUpload setEnabled:NO];
+            labelUploadStatus.textColor = [UIColor blackColor];
+            labelUploadStatus.text = @"Server connecting...";
+        });
+    }];
+    [UploadManager addDidUploadBlock:^(int nrFinished, int total, bool isAutoMode) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            labelUploadStatus.text = [[NSString alloc] initWithFormat:@"Uploading %d of %d", nrFinished, total];
+        });
+    }];
+    [UploadManager addUploadFailedBlock:^(int nrFinished, int total, bool isAutoMode) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSString *umode = (isAutoMode ? @"Automatically" : @"Manually");
+            labelUploadStatus.text = [[NSString alloc] initWithFormat:@"%@ uploading failed at %@ (%d uploaded, %d failed)", umode, [dateFormatterScreen stringFromDate:[NSDate date]], nrFinished, total - nrFinished];
+            [buttonUpload setEnabled:YES];
+            labelUploadStatus.textColor = [UIColor redColor];
+        });
+    }];
+    [UploadManager addUploadAllSucceededBlock:^(int total, bool isAutoMode) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSString *umode = (isAutoMode ? @"Automatically" : @"Manually");
+            labelUploadStatus.text = [[NSString alloc] initWithFormat:@"%@ uploading successfully at %@ (%d in total)", umode, [dateFormatterScreen stringFromDate:[NSDate date]], total];
+            [buttonUpload setEnabled:YES];
+        });
+    }];
+    [UploadManager addNothingToUploadBlock:^() {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            labelUploadStatus.text = @"Nothing to upload...";
+            [buttonUpload setEnabled:YES];
+        });
+    }];
 }
-
-- (IBAction)b2:(id)sender {
-    [self stopBroadcast];
-}
-
-- (void)updateLabel:(NSTimer*)timer {
-    [self stopBroadcast];
-    txminor++;
-    [self startBroadcast];
-}
-*/
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
     //NSLog(@"touchesBegan:withEvent:");

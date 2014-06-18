@@ -10,11 +10,14 @@
 
 @implementation LazyFileUploader
 
-+ (void)uploadFile:(NSString*)filename urlString:(NSString*)urlString formFilename:(NSString*)formFilename callback:(void (^)(BOOL result))callback {
++ (void)uploadFile:(NSString*)filename urlString:(NSString*)urlString callback:(void (^)(BOOL result))callback {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         BOOL success = false;
         int trial = 2;
+        
+        NSLog(@"file:%@ url:%@", filename, urlString);
         if (iosfileExist([filename UTF8String])) {
+            NSLog(@"yes, the file exist");
             while (success == false && trial > 0) {
                 trial--;
                 NSMutableURLRequest *request= [[NSMutableURLRequest alloc] init];
@@ -24,8 +27,6 @@
                 NSData *fileData = [[NSFileManager defaultManager] contentsAtPath:getPathName([filename UTF8String])];
                 [postbody appendData:fileData];
                 [request setHTTPBody:postbody];
-                
-                
                 
                 NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
                 if (returnData != nil) {

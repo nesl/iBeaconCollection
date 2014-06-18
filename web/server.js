@@ -26,9 +26,14 @@ function start() {
 			});
 		}
 		else if (pathname.substring(0, 2) == "/u") {
-			var id = pathname.substring(2);
-			console.log("in upload: " + id);
+			var fname = pathname.substring(2);
+			console.log("in upload: " + fname);
+			var hyPos = fname.indexOf("_");
+			var id = fname.substring(0, hyPos);
+			//console.log("hyphen position index: " + hyPos);
 			var body = "";
+			var fs = require('fs');
+			fs.mkdir("./upload/" + id, function(e){} );
 			request.on('data', function (chunk) {
 				body += chunk;
 				//console.log(chunk);
@@ -39,9 +44,10 @@ function start() {
 				//console.log(body);
 				response.writeHead(200);
 				response.end("okdes");
-				var fs = require('fs');
-				fs.writeFile("./upload/" + id, body, function(err) {
+				var pathname = "./upload/" + id + "/" + fname;
+				fs.writeFile("./upload/" + id + "/" + fname, body, function(err) {
 					if(err) {
+						console.log("save file error");
 						console.log(err);
 					} else {
 						console.log("The file was saved!");
@@ -50,6 +56,7 @@ function start() {
 			});
 		}
 		else {
+			console.log("malicious connection with " + pathname);
 			response.writeHead(200, {"Content-Type": "text/plain"});
 			response.write("text/plain: the default page");
 			response.end();

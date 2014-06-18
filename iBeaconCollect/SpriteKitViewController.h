@@ -12,6 +12,8 @@
 
 #import "Utility.h"
 #import "LazyFileUploader.h"
+#import "DataLogger.h"
+#import "UploadManager.h"
 
 @interface SpriteKitViewController : UIViewController <UITextFieldDelegate, CLLocationManagerDelegate, CBPeripheralManagerDelegate> {
     IBOutlet UITextField *textDeviceID;
