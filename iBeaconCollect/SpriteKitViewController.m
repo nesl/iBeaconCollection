@@ -173,13 +173,21 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didDetermineState:(CLRegionState)state forRegion:(CLRegion *)region {
-    
-    if (state == CLRegionStateInside)
+    int lno;
+    if (state == CLRegionStateInside) {
         NSLog(@"state of region %@ is inside", region.identifier);
-    else if (state == CLRegionStateOutside)
+        lno = 0;
+    }
+    else if (state == CLRegionStateOutside) {
         NSLog(@"state of region %@ is outside", region.identifier);
-    else
+        lno = 1;
+    }
+    else {
         NSLog(@"state of region %@ is unknown", region.identifier);
+        lno = -1;
+    }
+    
+    [DataLogger putLine:[[NSString alloc] initWithFormat:@"%lf,10,%@,%d,0,0,0,0", [NSDate timeIntervalSinceReferenceDate], region.identifier, lno]];
     
     @synchronized (self) {
         for (int i = 0; i < rxNr; i++) {
