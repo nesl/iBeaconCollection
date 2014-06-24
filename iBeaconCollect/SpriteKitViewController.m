@@ -8,7 +8,7 @@
 
 #import "SpriteKitViewController.h"
 
-NSString *ip = @"http://192.168.43.89:8888";
+#pragma mark - iOS view handler
 
 @interface SpriteKitViewController () {
     UILabel *labelRxUuid[10];
@@ -17,6 +17,9 @@ NSString *ip = @"http://192.168.43.89:8888";
     UILabel *labelRxIn[10];
     UILabel *labelRxOut[10];
     UILabel *labelRxCnt[10];
+    UILabel *labelRxState[10];
+    
+    NSString *ip;
     
     CLLocationManager *locationManager;
     CBPeripheralManager *peripheralManager;
@@ -36,6 +39,8 @@ NSString *ip = @"http://192.168.43.89:8888";
     int rxIn[20];
     int rxOut[20];
     int rxCnt[20];
+    CLRegionState rxRegionState[20];
+    
     CLBeaconRegion *rxbeaconRegions[20];
     int rxNr;
     BOOL rxenabled;
@@ -69,10 +74,13 @@ NSString *ip = @"http://192.168.43.89:8888";
     rxenabled = true;
     locationManager = [[CLLocationManager alloc] init];
     locationManager.delegate = self;
+    
     dateFormatterScreen = [[NSDateFormatter alloc] init];
     [dateFormatterScreen setDateFormat:@"MM/dd HH:mm:ss"];
     textDeviceID.keyboardType = UIKeyboardTypeNumberPad;
 	successfullyConnectBefore = false;
+    ip = [[NSString alloc] initWithFormat:@"http://%@", [InfoRestoreHandler getIPPort]];
+    labelServerIP.text = ip;
 }
 
 - (void)didReceiveMemoryWarning
@@ -80,6 +88,10 @@ NSString *ip = @"http://192.168.43.89:8888";
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
+
+#pragma mark - Bluetooth handling
 
 -(void)peripheralManagerDidUpdateState:(CBPeripheralManager *)peripheral {
     if (peripheral.state == CBPeripheralManagerStatePoweredOn) {
@@ -90,6 +102,27 @@ NSString *ip = @"http://192.168.43.89:8888";
         [peripheralManager stopAdvertising];
     }
 }
+
+- (void)startBroadcast {
+    NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:txuuid];
+    txidentifier = [[NSString alloc] initWithFormat:@"%@_%d_%d", txuuid, txmajor, txminor];
+    NSLog(@"%@", txidentifier);
+    CLBeaconRegion *beaconRegion = [[CLBeaconRegion alloc] initWithProximityUUID:uuid
+                                                                           major:txmajor
+                                                                           minor:txminor
+                                                                      identifier:txidentifier];
+    txbeaconPeripheralData = [beaconRegion peripheralDataWithMeasuredPower:nil];
+    peripheralManager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil options:nil];
+}
+
+- (void)stopBroadcast {
+    [peripheralManager stopAdvertising];
+    peripheralManager = nil;
+}
+
+
+
+#pragma mark - LocationManager reports
 
 - (void)locationManager:(CLLocationManager *)manager didRangeBeacons:(NSArray *)beacons inRegion:(CLBeaconRegion *)region {
     for (int i = 0; i < [beacons count]; i++) {
@@ -121,6 +154,7 @@ NSString *ip = @"http://192.168.43.89:8888";
         if ([rxidentifier[i] isEqualToString:region.identifier]) {
             rxIn[i]++;
             labelRxIn[i].text = [[NSString alloc] initWithFormat:@"%d", rxIn[i]];
+            rxRegionState[i] = CLRegionStateInside;
         }
     }
    [DataLogger putLine:[[NSString alloc] initWithFormat:@"%lf,0,%@,0,0,0,0,0", [NSDate timeIntervalSinceReferenceDate], region.identifier]];
@@ -132,27 +166,69 @@ NSString *ip = @"http://192.168.43.89:8888";
         if ([rxidentifier[i] isEqualToString:region.identifier]) {
             rxOut[i]++;
             labelRxOut[i].text = [[NSString alloc] initWithFormat:@"%d", rxOut[i]];
+            rxRegionState[i] = CLRegionStateOutside;
         }
     }
     [DataLogger putLine:[[NSString alloc] initWithFormat:@"%lf,1,%@,0,0,0,0,0", [NSDate timeIntervalSinceReferenceDate], region.identifier]];
 }
 
-- (void)startBroadcast {
-    NSUUID *uuid = [[NSUUID alloc] initWithUUIDString:txuuid];
-    txidentifier = [[NSString alloc] initWithFormat:@"%@_%d_%d", txuuid, txmajor, txminor];
-    NSLog(@"%@", txidentifier);
-    CLBeaconRegion *beaconRegion = [[CLBeaconRegion alloc] initWithProximityUUID:uuid
-                                                                           major:txmajor
-                                                                           minor:txminor
-                                                                      identifier:txidentifier];
-    txbeaconPeripheralData = [beaconRegion peripheralDataWithMeasuredPower:nil];
-    peripheralManager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil options:nil];
+- (void)locationManager:(CLLocationManager *)manager didDetermineState:(CLRegionState)state forRegion:(CLRegion *)region {
+    
+    if (state == CLRegionStateInside)
+        NSLog(@"state of region %@ is inside", region.identifier);
+    else if (state == CLRegionStateOutside)
+        NSLog(@"state of region %@ is outside", region.identifier);
+    else
+        NSLog(@"state of region %@ is unknown", region.identifier);
+    
+    @synchronized (self) {
+        for (int i = 0; i < rxNr; i++) {
+            //NSLog(@"#%@# ?%@?", rxidentifier[i], region.identifier);
+            if ([rxidentifier[i] isEqualToString:region.identifier]) {
+                if (state == CLRegionStateInside)
+                    labelRxState[i].text = @"In";
+                else if (state == CLRegionStateOutside)
+                    labelRxState[i].text = @"Out";
+                else
+                    labelRxState[i].text = @"?";
+                if (rxenabled) {
+                    if (state == CLRegionStateUnknown)
+                        labelRxState[i].textColor = [UIColor redColor];
+                    else if (rxRegionState[i] == CLRegionStateUnknown)
+                        labelRxState[i].textColor = [UIColor blackColor];
+                    else if (rxRegionState[i] != state)
+                        labelRxState[i].textColor = [UIColor redColor];
+                    else
+                        labelRxState[i].textColor = [UIColor blackColor];
+                }
+            }
+        }
+    }
 }
 
-- (void)stopBroadcast {
-    [peripheralManager stopAdvertising];
-    peripheralManager = nil;
+- (void)checkAllRegionInOut {
+    @synchronized (self) {
+        for (int i = 0; i < rxNr; i++) {
+            if (rxenabled && [labelRxState[i].text isEqualToString:@"x"])
+                labelRxState[i].textColor = [UIColor redColor];
+            labelRxState[i].text = @"x";
+        }
+        NSSet *set = [locationManager monitoredRegions];
+        //NSLog(@"find total %zd regions", [set count]);
+        for (CLRegion* region in set) {
+            //NSLog(@"find region %@", region.identifier);
+            [locationManager requestStateForRegion:region];
+        }
+    }
 }
+
+- (void)checkAllRegionInOut:(NSTimer*)timer {
+    [self checkAllRegionInOut];
+}
+
+
+
+#pragma mark - Button and switches events
 
 - (IBAction)buttonConnectionTouchDown:(id)sender {
     [self.view endEditing:YES];
@@ -161,10 +237,18 @@ NSString *ip = @"http://192.168.43.89:8888";
     else {
         [buttonConnect setEnabled:NO];
         [textDeviceID setEnabled:NO];
+        [buttonChangeIP setEnabled:NO];
         NSString *url = [[NSString alloc] initWithFormat:@"%@/c%@", ip, textDeviceID.text];
         NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
         connectionUpdate = [[NSURLConnection alloc] initWithRequest:request delegate:self];
     }
+}
+
+- (IBAction)buttonChangeIPPortTouchDown:(id)sender {
+    [self.view endEditing:YES];
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Change IP and Port" message:@"Enter your server IP and port\n(e.g., 192.168.0.1:8888)" delegate:self cancelButtonTitle:@"Sure" otherButtonTitles:nil];
+    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [alert show];
 }
 
 - (IBAction)buttonTxEnableTouchDown:(id)sender {
@@ -220,6 +304,10 @@ NSString *ip = @"http://192.168.43.89:8888";
     [buttonUpload setEnabled:NO];
     [UploadManager uploadNow];
 }
+
+
+
+#pragma mark - Configuration file connection
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
     NSLog(@"didReceiveResponse");
@@ -292,6 +380,11 @@ NSString *ip = @"http://192.168.43.89:8888";
             int horxin[20];
             int horxout[20];
             int horxcnt[20];
+            CLRegionState horxregionstate[20];
+            NSString *horxidentifier[20];
+            CLBeaconRegion *horxbeaconregions[20];
+            NSString *horxstattext[20];
+            UIColor *horxstatcolor[20];
             int horxNr = 0;
 
             do {
@@ -322,34 +415,55 @@ NSString *ip = @"http://192.168.43.89:8888";
                         horxin[horxNr] = 0;
                         horxout[horxNr] = 0;
                         horxcnt[horxNr] = 0;
+                        horxregionstate[horxNr] = CLRegionStateUnknown;
+                        horxidentifier[horxNr] = nil;
+                        horxbeaconregions[horxNr] = nil;
                         horxNr++;
                     }
                 }
             } while (horxNr < 20 && line != nil);
             
-            // handover
+            // tx handover
+            txuuid = hotxuuid;
+            txmajor = hotxmajor;
+            txminor = hotxminor;
             if (txenabled) {
                 [self stopBroadcast];
-            }
-            if (rxenabled) {
-                for (int i = 0; i < rxNr; i++) {
-                    [locationManager stopMonitoringForRegion:rxbeaconRegions[i]];
-                    [locationManager stopRangingBeaconsInRegion:rxbeaconRegions[i]];
-                }
+                [self startBroadcast];
             }
             
+            BOOL hoorirxexist[20];
+            BOOL honewrxexist[20];
+            for (int i = 0; i < 20; i++) {
+                hoorirxexist[i] = NO;
+                honewrxexist[i] = NO;
+            }
             for (int i = 0; i < rxNr; i++) {
                 for (int j = 0; j < horxNr; j++) {
                     if ([rxuuid[i] isEqualToString:horxuuid[j]] && rxmajor[i] == horxmajor[j] && rxminor[i] == horxminor[j]) {
                         horxin[j] = rxIn[i];
                         horxout[j] = rxOut[i];
                         horxcnt[j] = rxCnt[i];
+                        horxregionstate[j] = rxRegionState[i];
+                        horxidentifier[j] = rxidentifier[i];
+                        horxbeaconregions[j] = rxbeaconRegions[i];
+                        horxstattext[j] = labelRxState[i].text;
+                        horxstatcolor[j] = labelRxState[i].textColor;
+                        hoorirxexist[i] = YES;
+                        honewrxexist[j] = YES;
                     }
                 }
             }
-            txuuid = hotxuuid;
-            txmajor = hotxmajor;
-            txminor = hotxminor;
+            
+            if (rxenabled) {
+                for (int i = 0; i < rxNr; i++) {
+                    if (hoorirxexist[i] == NO) {
+                        [locationManager stopMonitoringForRegion:rxbeaconRegions[i]];
+                        [locationManager stopRangingBeaconsInRegion:rxbeaconRegions[i]];
+                        NSLog(@"delete identifier %d %@", i, rxidentifier[i]);
+                    }
+                }
+            }
             rxNr = horxNr;
             for (int i = 0; i < horxNr; i++) {
                 rxuuid[i] = horxuuid[i];
@@ -358,28 +472,33 @@ NSString *ip = @"http://192.168.43.89:8888";
                 rxIn[i] = horxin[i];
                 rxOut[i] = horxout[i];
                 rxCnt[i] = horxcnt[i];
+                rxRegionState[i] = horxregionstate[i];
+                rxidentifier[i] = horxidentifier[i];
+                rxbeaconRegions[i] = horxbeaconregions[i];
             }
             
-            if (txenabled) {
-                [self startBroadcast];
-            }
+            
             for (int i = 0; i < rxNr; i++) {
-                NSUUID *tuuid = [[NSUUID alloc] initWithUUIDString:rxuuid[i]];
-                rxidentifier[i] = [[NSString alloc] initWithFormat:@"%@_%d_%d", rxuuid[i], rxmajor[i], rxminor[i]];
-                CLBeaconRegion *tbeaconRegion;
-                if (rxmajor[i] == -1 && rxminor[i] == -1)
-                    tbeaconRegion = [[CLBeaconRegion alloc] initWithProximityUUID:tuuid identifier:rxidentifier[i]];
-                else if (rxminor[i] == -1)
-                    tbeaconRegion = [[CLBeaconRegion alloc] initWithProximityUUID:tuuid major:rxmajor[i] identifier:rxidentifier[i]];
-                else
-                    tbeaconRegion = [[CLBeaconRegion alloc] initWithProximityUUID:tuuid major:rxmajor[i] minor:rxminor[i] identifier:rxidentifier[i]];
-                tbeaconRegion.notifyOnEntry = YES;
-                tbeaconRegion.notifyOnExit = YES;
-                tbeaconRegion.notifyEntryStateOnDisplay = YES;
-                rxbeaconRegions[i] = tbeaconRegion;
-                if (rxenabled) {
-                    [locationManager startMonitoringForRegion:rxbeaconRegions[i]];
-                    [locationManager startRangingBeaconsInRegion:rxbeaconRegions[i]];
+                if (honewrxexist[i] == NO) {
+                    NSUUID *tuuid = [[NSUUID alloc] initWithUUIDString:rxuuid[i]];
+                    rxidentifier[i] = [[NSString alloc] initWithFormat:@"%@_%d_%d", rxuuid[i], rxmajor[i], rxminor[i]];
+                    NSLog(@"create identifier %d %@", i, rxidentifier[i]);
+                    CLBeaconRegion *tbeaconRegion;
+                    if (rxmajor[i] == -1 && rxminor[i] == -1)
+                        tbeaconRegion = [[CLBeaconRegion alloc] initWithProximityUUID:tuuid identifier:rxidentifier[i]];
+                    else if (rxminor[i] == -1)
+                        tbeaconRegion = [[CLBeaconRegion alloc] initWithProximityUUID:tuuid major:rxmajor[i] identifier:rxidentifier[i]];
+                    else
+                        tbeaconRegion = [[CLBeaconRegion alloc] initWithProximityUUID:tuuid major:rxmajor[i] minor:rxminor[i] identifier:rxidentifier[i]];
+                    tbeaconRegion.notifyOnEntry = YES;
+                    tbeaconRegion.notifyOnExit = YES;
+                    tbeaconRegion.notifyEntryStateOnDisplay = YES;
+                    rxbeaconRegions[i] = tbeaconRegion;
+                    if (rxenabled) {
+                        [locationManager startMonitoringForRegion:rxbeaconRegions[i]];
+                        [locationManager startRangingBeaconsInRegion:rxbeaconRegions[i]];
+                        NSLog(@"re-enable %d %@", i, rxidentifier[i]);
+                    }
                 }
             }
             
@@ -400,6 +519,14 @@ NSString *ip = @"http://192.168.43.89:8888";
                     labelRxIn[i].text = [[NSString alloc] initWithFormat:@"%d", rxIn[i]];
                     labelRxOut[i].text = [[NSString alloc] initWithFormat:@"%d", rxOut[i]];
                     labelRxCnt[i].text = [[NSString alloc] initWithFormat:@"%d", rxCnt[i]];
+                    if (honewrxexist[i]) {
+                        labelRxState[i].textColor = horxstatcolor[i];
+                        labelRxState[i].text = horxstattext[i];
+                    }
+                    else {
+                        labelRxState[i].textColor = (rxenabled ? colorWorking : colorNonworking);
+                        labelRxState[i].text = @"--";
+                    }
                 }
                 else {
                     labelRxUuid[i].text = @"";
@@ -408,6 +535,7 @@ NSString *ip = @"http://192.168.43.89:8888";
                     labelRxIn[i].text = @"";
                     labelRxOut[i].text = @"";
                     labelRxCnt[i].text = @"";
+                    labelRxState[i].text = @"";
                 }
             }
             [self connectionUpdateEndWithErrorMessage:nil];
@@ -422,11 +550,14 @@ NSString *ip = @"http://192.168.43.89:8888";
             //NSLog(@"end 1");
             [textDeviceID setEnabled:YES];
             [buttonConnect setEnabled:YES];
+            [buttonChangeIP setEnabled:YES];
         }
         else {
             buttonConnect.alpha = 0.0;
             [textDeviceID setEnabled:NO];
             [self showTxRxInfoAlpha:1.0];
+            labelServerIP.alpha = 0.0;
+            buttonChangeIP.alpha = 0.0;
             successfullyConnectBefore = true;
             [DataLogger globalInit:textDeviceID.text];
             //NSLog(@"end 2 %@", textDeviceID.text);
@@ -439,6 +570,11 @@ NSString *ip = @"http://192.168.43.89:8888";
             //NSLog(@"end 2.2");
             [self initializeUploadManagerPrefix:url];
             //NSLog(@"end 2.3");
+            [NSTimer scheduledTimerWithTimeInterval:5
+                                             target:self
+                                           selector:@selector(checkAllRegionInOut:)
+                                           userInfo:nil
+                                            repeats:YES];
         }
     }
     [self changeLabelErrorMessage:message];
@@ -448,9 +584,7 @@ NSString *ip = @"http://192.168.43.89:8888";
     NSLog(@"didFailWithError");
     NSLog([NSString stringWithFormat:@"Connection failed: %@", [error description]]);
     if (connection == connectionUpdate) {
-        [self changeLabelErrorMessage:@"network connection error"];
-        [buttonConnect setEnabled:YES];
-        [textDeviceID setEnabled:YES];
+        [self connectionUpdateEndWithErrorMessage:@"network connection error"];
     }
 }
 
@@ -470,6 +604,16 @@ NSString *ip = @"http://192.168.43.89:8888";
     }
 }
 
+- (void)reloadConfigurationFile:(NSTimer*)timer {
+    NSString *url = [[NSString alloc] initWithFormat:@"%@/c%@", ip, textDeviceID.text];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+    connectionUpdate = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+}
+
+
+
+#pragma mark - UUID rule match
+
 - (BOOL)checkRuleApplyRuuid:(NSString*)ruuid rmajor:(int)rmajor rminor:(int)rminor tuuid:(NSString*)tuuid tmajor:(int)tmajor tminor:(int)tminor {
     bool condUuid = [ruuid isEqualToString:tuuid];
     bool condMajor = (rmajor == -1 || tmajor == rmajor);
@@ -477,11 +621,9 @@ NSString *ip = @"http://192.168.43.89:8888";
     return condUuid && condMajor && condMinor;
 }
 
-- (void)reloadConfigurationFile:(NSTimer*)timer {
-    NSString *url = [[NSString alloc] initWithFormat:@"%@/c%@", ip, textDeviceID.text];
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
-    connectionUpdate = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-}
+
+
+#pragma mark - Upload sensed file back to server
 
 - (void)initializeUploadManagerPrefix:(NSString*)prefix {
     [UploadManager globalInitWithIpPortPrefix:prefix];
@@ -520,6 +662,11 @@ NSString *ip = @"http://192.168.43.89:8888";
     }];
 }
 
+
+
+
+#pragma mark - Keyboard handler
+
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
     //NSLog(@"touchesBegan:withEvent:");
     [self.view endEditing:YES];
@@ -527,10 +674,22 @@ NSString *ip = @"http://192.168.43.89:8888";
 }
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField {
-    
     [textField resignFirstResponder];
     return YES;
 }
+
+
+#pragma mark - Dialog
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    ip = [[NSString alloc] initWithFormat:@"http://%@", [[alertView textFieldAtIndex:0] text]];
+    // TODO: check ip is validate, [InfoRestoreHandler checkip]
+    labelServerIP.text = ip;
+    [InfoRestoreHandler commitIPPort:[[alertView textFieldAtIndex:0] text]];
+}
+
+
+#pragma mark - UI handler
 
 - (void)labelIndex {
     labelRxUuid[0] = labelRxUuid0;
@@ -593,6 +752,16 @@ NSString *ip = @"http://192.168.43.89:8888";
     labelRxCnt[7] = labelRxCnt7;
     labelRxCnt[8] = labelRxCnt8;
     labelRxCnt[9] = labelRxCnt9;
+    labelRxState[0] = labelRxState0;
+    labelRxState[1] = labelRxState1;
+    labelRxState[2] = labelRxState2;
+    labelRxState[3] = labelRxState3;
+    labelRxState[4] = labelRxState4;
+    labelRxState[5] = labelRxState5;
+    labelRxState[6] = labelRxState6;
+    labelRxState[7] = labelRxState7;
+    labelRxState[8] = labelRxState8;
+    labelRxState[9] = labelRxState9;
 }
 
 - (void)showTxRxInfoAlpha:(double)alpha {
@@ -603,6 +772,7 @@ NSString *ip = @"http://192.168.43.89:8888";
         labelRxIn[i].alpha = alpha;
         labelRxOut[i].alpha = alpha;
         labelRxCnt[i].alpha = alpha;
+        labelRxState[i].alpha = alpha;
     }
     labelTxLInfo.alpha = alpha;
     labelTxLMajor.alpha = alpha;
@@ -617,6 +787,7 @@ NSString *ip = @"http://192.168.43.89:8888";
     labelRxLIn.alpha = alpha;
     labelRxLOut.alpha = alpha;
     labelRxLCnt.alpha = alpha;
+    labelRxLState.alpha = alpha;
     buttonTxEnable.alpha = alpha;
     buttonRxEnable.alpha = alpha;
     labelLAutoUpload.alpha = alpha;
@@ -641,6 +812,7 @@ NSString *ip = @"http://192.168.43.89:8888";
     labelRxLIn.textColor = color;
     labelRxLOut.textColor = color;
     labelRxLCnt.textColor = color;
+    labelRxLState.textColor = color;
     for (int i = 0; i < 10; i++) {
         labelRxUuid[i].textColor = color;
         labelRxMajor[i].textColor = color;
@@ -648,7 +820,10 @@ NSString *ip = @"http://192.168.43.89:8888";
         labelRxIn[i].textColor = color;
         labelRxOut[i].textColor = color;
         labelRxCnt[i].textColor = color;
+        labelRxState[i].textColor = color;
     }
 }
+
+
 
 @end

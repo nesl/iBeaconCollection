@@ -93,8 +93,10 @@ NSTimer *timerCutFile;
 
 + (void)putLine:(NSString*)line {
     @synchronized (dataLoggerLock) {
-        fprintf(dataLoggerFLog, "%s\n", [line UTF8String]);
-        fflush(dataLoggerFLog);
+        if (dataLoggerFLog != NULL) {
+            fprintf(dataLoggerFLog, "%s\n", [line UTF8String]);
+            fflush(dataLoggerFLog);
+        }
     }
 }
 

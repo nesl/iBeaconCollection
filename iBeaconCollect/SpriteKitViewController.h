@@ -14,6 +14,7 @@
 #import "LazyFileUploader.h"
 #import "DataLogger.h"
 #import "UploadManager.h"
+#import "InfoRestoreHandler.h"
 
 @interface SpriteKitViewController : UIViewController <UITextFieldDelegate, CLLocationManagerDelegate, CBPeripheralManagerDelegate> {
     IBOutlet UITextField *textDeviceID;
@@ -21,6 +22,9 @@
     IBOutlet UILabel *labelLastUpdate;
     IBOutlet UILabel *labelLastConnection;
     IBOutlet UILabel *labelConnectionErrorMessage;
+    
+    IBOutlet UILabel *labelServerIP;
+    IBOutlet UIButton *buttonChangeIP;
     
     IBOutlet UILabel *labelTxLInfo;
     IBOutlet UIButton *buttonTxEnable;
@@ -38,6 +42,7 @@
     IBOutlet UILabel *labelRxLIn;
     IBOutlet UILabel *labelRxLOut;
     IBOutlet UILabel *labelRxLCnt;
+    IBOutlet UILabel *labelRxLState;
     
     IBOutlet UILabel *labelRxUuid0;
     IBOutlet UILabel *labelRxUuid1;
@@ -99,6 +104,16 @@
     IBOutlet UILabel *labelRxCnt7;
     IBOutlet UILabel *labelRxCnt8;
     IBOutlet UILabel *labelRxCnt9;
+    IBOutlet UILabel *labelRxState0;
+    IBOutlet UILabel *labelRxState1;
+    IBOutlet UILabel *labelRxState2;
+    IBOutlet UILabel *labelRxState3;
+    IBOutlet UILabel *labelRxState4;
+    IBOutlet UILabel *labelRxState5;
+    IBOutlet UILabel *labelRxState6;
+    IBOutlet UILabel *labelRxState7;
+    IBOutlet UILabel *labelRxState8;
+    IBOutlet UILabel *labelRxState9;
     
     IBOutlet UILabel *labelLAutoUpload;
     IBOutlet UISwitch *switchAutoUpload;
