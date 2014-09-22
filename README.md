@@ -2,15 +2,14 @@ The whole system consists two parts: client side and server side. The client sid
 
 * The whole web server is in the folder called web. Simply type command *"node index.js"* should work.
 * Under folder web, there are two important folders: upload and config. I put a sample configuration file in the folder config, but the format is below:
-  * &lt;metadata&gt;
-
-> Txuuid
-> Txmajor
-> Txminor
-> Rxuuid Rxmajor Rxminor1
-> Rxuuid Rxmajor Rxminor2
-> ...
-> Rxuuid Rxmajor RxminorN
+> &lt;metadata&gt;<br/>
+> Txuuid<br/>
+> Txmajor<br/>
+> Txminor<br/>
+> Rxuuid Rxmajor Rxminor1<br/>
+> Rxuuid Rxmajor Rxminor2<br/>
+> ...<br/>
+> Rxuuid Rxmajor RxminorN<br/>
 
 Metadata is presettings. All the metadata flag begin with an underscope. Currently supported metadata flags are:
 _txdisable: begin the app with TX disabled. (default is enabled)
