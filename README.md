@@ -2,6 +2,7 @@ The whole system consists two parts: client side and server side. The client sid
 
 * The whole web server is in the folder called web. Simply type command *"node index.js"* should work.
 * Under folder web, there are two important folders: upload and config. I put a sample configuration file in the folder config, but the format is below:
+
 > &lt;metadata&gt;<br/>
 > Txuuid<br/>
 > Txmajor<br/>
