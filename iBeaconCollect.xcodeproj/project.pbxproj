@@ -7,9 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EE00A14819BD49FE00738874 /* IPController.m in Sources */ = {isa = PBXBuildFile; fileRef = EE00A14719BD49FE00738874 /* IPController.m */; };
 		EE228CB2194F743200475240 /* DataLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = EE228CB1194F743200475240 /* DataLogger.m */; };
 		EE228CB5194FC2BD00475240 /* UploadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EE228CB4194FC2BD00475240 /* UploadManager.m */; };
 		EE228CB81958C4D000475240 /* InfoRestoreHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = EE228CB71958C4D000475240 /* InfoRestoreHandler.m */; };
+		EE47240D19C8138F005B015E /* ConfigCache.m in Sources */ = {isa = PBXBuildFile; fileRef = EE47240C19C8138F005B015E /* ConfigCache.m */; };
+		EE64E91E19BE34F900F4F7D6 /* ConfigValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = EE64E91D19BE34F900F4F7D6 /* ConfigValidator.m */; };
+		EE64E92119BE510500F4F7D6 /* IBeaconIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = EE64E92019BE510500F4F7D6 /* IBeaconIdentifier.m */; };
+		EE87261119BD2DEF00B8E645 /* ConfigViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EE87261019BD2DEF00B8E645 /* ConfigViewController.m */; };
 		EE9E017F194AE86800CCF42F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9E017E194AE86800CCF42F /* Foundation.framework */; };
 		EE9E0181194AE86800CCF42F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9E0180194AE86800CCF42F /* CoreGraphics.framework */; };
 		EE9E0183194AE86800CCF42F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9E0182194AE86800CCF42F /* UIKit.framework */; };
@@ -18,7 +23,7 @@
 		EE9E018F194AE86800CCF42F /* SpriteKitAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EE9E018E194AE86800CCF42F /* SpriteKitAppDelegate.m */; };
 		EE9E0192194AE86800CCF42F /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EE9E0190194AE86800CCF42F /* Main_iPhone.storyboard */; };
 		EE9E0195194AE86800CCF42F /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EE9E0193194AE86800CCF42F /* Main_iPad.storyboard */; };
-		EE9E0198194AE86800CCF42F /* SpriteKitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EE9E0197194AE86800CCF42F /* SpriteKitViewController.m */; };
+		EE9E0198194AE86800CCF42F /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EE9E0197194AE86800CCF42F /* MainViewController.m */; };
 		EE9E019A194AE86800CCF42F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE9E0199194AE86800CCF42F /* Images.xcassets */; };
 		EE9E01A1194AE86800CCF42F /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9E01A0194AE86800CCF42F /* XCTest.framework */; };
 		EE9E01A2194AE86800CCF42F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9E017E194AE86800CCF42F /* Foundation.framework */; };
@@ -30,6 +35,9 @@
 		EE9E01C0194BFEEA00CCF42F /* ib2Icon_29@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EE9E01BD194BFEEA00CCF42F /* ib2Icon_29@2x.png */; };
 		EE9E01C1194BFEEA00CCF42F /* ib2Icon_40@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EE9E01BE194BFEEA00CCF42F /* ib2Icon_40@2x.png */; };
 		EE9E01C2194BFEEA00CCF42F /* ib2Icon_60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EE9E01BF194BFEEA00CCF42F /* ib2Icon_60@2x.png */; };
+		EECC211219C33A5D00B5FFD8 /* RXAssistant.m in Sources */ = {isa = PBXBuildFile; fileRef = EECC211119C33A5D00B5FFD8 /* RXAssistant.m */; };
+		EECC211519C34D6C00B5FFD8 /* IBeaconStatistics.m in Sources */ = {isa = PBXBuildFile; fileRef = EECC211419C34D6C00B5FFD8 /* IBeaconStatistics.m */; };
+		EECC211819C3603400B5FFD8 /* TXViewAssistant.m in Sources */ = {isa = PBXBuildFile; fileRef = EECC211719C3603400B5FFD8 /* TXViewAssistant.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,12 +51,22 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EE00A14619BD49FE00738874 /* IPController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPController.h; sourceTree = "<group>"; };
+		EE00A14719BD49FE00738874 /* IPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IPController.m; sourceTree = "<group>"; };
 		EE228CB0194F743200475240 /* DataLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataLogger.h; sourceTree = "<group>"; };
 		EE228CB1194F743200475240 /* DataLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataLogger.m; sourceTree = "<group>"; };
 		EE228CB3194FC2BD00475240 /* UploadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploadManager.h; sourceTree = "<group>"; };
 		EE228CB4194FC2BD00475240 /* UploadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploadManager.m; sourceTree = "<group>"; };
 		EE228CB61958C4D000475240 /* InfoRestoreHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoRestoreHandler.h; sourceTree = "<group>"; };
 		EE228CB71958C4D000475240 /* InfoRestoreHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InfoRestoreHandler.m; sourceTree = "<group>"; };
+		EE47240B19C8138F005B015E /* ConfigCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigCache.h; sourceTree = "<group>"; };
+		EE47240C19C8138F005B015E /* ConfigCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigCache.m; sourceTree = "<group>"; };
+		EE64E91C19BE34F900F4F7D6 /* ConfigValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigValidator.h; sourceTree = "<group>"; };
+		EE64E91D19BE34F900F4F7D6 /* ConfigValidator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigValidator.m; sourceTree = "<group>"; };
+		EE64E91F19BE510500F4F7D6 /* IBeaconIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IBeaconIdentifier.h; sourceTree = "<group>"; };
+		EE64E92019BE510500F4F7D6 /* IBeaconIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IBeaconIdentifier.m; sourceTree = "<group>"; };
+		EE87260F19BD2DEF00B8E645 /* ConfigViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigViewController.h; sourceTree = "<group>"; };
+		EE87261019BD2DEF00B8E645 /* ConfigViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigViewController.m; sourceTree = "<group>"; };
 		EE9E017B194AE86800CCF42F /* iBeaconCollect.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iBeaconCollect.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9E017E194AE86800CCF42F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		EE9E0180194AE86800CCF42F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -61,8 +79,8 @@
 		EE9E018E194AE86800CCF42F /* SpriteKitAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpriteKitAppDelegate.m; sourceTree = "<group>"; };
 		EE9E0191194AE86800CCF42F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
 		EE9E0194194AE86800CCF42F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
-		EE9E0196194AE86800CCF42F /* SpriteKitViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpriteKitViewController.h; sourceTree = "<group>"; };
-		EE9E0197194AE86800CCF42F /* SpriteKitViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpriteKitViewController.m; sourceTree = "<group>"; };
+		EE9E0196194AE86800CCF42F /* MainViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		EE9E0197194AE86800CCF42F /* MainViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
 		EE9E0199194AE86800CCF42F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		EE9E019F194AE86800CCF42F /* iBeaconCollectTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = iBeaconCollectTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9E01A0194AE86800CCF42F /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -76,6 +94,12 @@
 		EE9E01BD194BFEEA00CCF42F /* ib2Icon_29@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ib2Icon_29@2x.png"; sourceTree = "<group>"; };
 		EE9E01BE194BFEEA00CCF42F /* ib2Icon_40@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ib2Icon_40@2x.png"; sourceTree = "<group>"; };
 		EE9E01BF194BFEEA00CCF42F /* ib2Icon_60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ib2Icon_60@2x.png"; sourceTree = "<group>"; };
+		EECC211019C33A5D00B5FFD8 /* RXAssistant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RXAssistant.h; sourceTree = "<group>"; };
+		EECC211119C33A5D00B5FFD8 /* RXAssistant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RXAssistant.m; sourceTree = "<group>"; };
+		EECC211319C34D6C00B5FFD8 /* IBeaconStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IBeaconStatistics.h; sourceTree = "<group>"; };
+		EECC211419C34D6C00B5FFD8 /* IBeaconStatistics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IBeaconStatistics.m; sourceTree = "<group>"; };
+		EECC211619C3603400B5FFD8 /* TXViewAssistant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TXViewAssistant.h; sourceTree = "<group>"; };
+		EECC211719C3603400B5FFD8 /* TXViewAssistant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TXViewAssistant.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,8 +166,24 @@
 				EE9E018E194AE86800CCF42F /* SpriteKitAppDelegate.m */,
 				EE9E0190194AE86800CCF42F /* Main_iPhone.storyboard */,
 				EE9E0193194AE86800CCF42F /* Main_iPad.storyboard */,
-				EE9E0196194AE86800CCF42F /* SpriteKitViewController.h */,
-				EE9E0197194AE86800CCF42F /* SpriteKitViewController.m */,
+				EE9E0196194AE86800CCF42F /* MainViewController.h */,
+				EE9E0197194AE86800CCF42F /* MainViewController.m */,
+				EE87260F19BD2DEF00B8E645 /* ConfigViewController.h */,
+				EE87261019BD2DEF00B8E645 /* ConfigViewController.m */,
+				EE00A14619BD49FE00738874 /* IPController.h */,
+				EE00A14719BD49FE00738874 /* IPController.m */,
+				EE64E91C19BE34F900F4F7D6 /* ConfigValidator.h */,
+				EE64E91D19BE34F900F4F7D6 /* ConfigValidator.m */,
+				EE47240B19C8138F005B015E /* ConfigCache.h */,
+				EE47240C19C8138F005B015E /* ConfigCache.m */,
+				EECC211619C3603400B5FFD8 /* TXViewAssistant.h */,
+				EECC211719C3603400B5FFD8 /* TXViewAssistant.m */,
+				EECC211019C33A5D00B5FFD8 /* RXAssistant.h */,
+				EECC211119C33A5D00B5FFD8 /* RXAssistant.m */,
+				EE64E91F19BE510500F4F7D6 /* IBeaconIdentifier.h */,
+				EE64E92019BE510500F4F7D6 /* IBeaconIdentifier.m */,
+				EECC211319C34D6C00B5FFD8 /* IBeaconStatistics.h */,
+				EECC211419C34D6C00B5FFD8 /* IBeaconStatistics.m */,
 				EE228CB61958C4D000475240 /* InfoRestoreHandler.h */,
 				EE228CB71958C4D000475240 /* InfoRestoreHandler.m */,
 				EE228CB3194FC2BD00475240 /* UploadManager.h */,
@@ -292,12 +332,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE9E01B9194BCE8C00CCF42F /* Utility.m in Sources */,
+				EE87261119BD2DEF00B8E645 /* ConfigViewController.m in Sources */,
+				EE47240D19C8138F005B015E /* ConfigCache.m in Sources */,
 				EE9E018F194AE86800CCF42F /* SpriteKitAppDelegate.m in Sources */,
+				EECC211219C33A5D00B5FFD8 /* RXAssistant.m in Sources */,
 				EE9E018B194AE86800CCF42F /* main.m in Sources */,
-				EE9E0198194AE86800CCF42F /* SpriteKitViewController.m in Sources */,
+				EECC211819C3603400B5FFD8 /* TXViewAssistant.m in Sources */,
+				EE9E0198194AE86800CCF42F /* MainViewController.m in Sources */,
 				EE9E01BC194BDB3900CCF42F /* LazyFileUploader.m in Sources */,
+				EE64E92119BE510500F4F7D6 /* IBeaconIdentifier.m in Sources */,
+				EE00A14819BD49FE00738874 /* IPController.m in Sources */,
 				EE228CB81958C4D000475240 /* InfoRestoreHandler.m in Sources */,
+				EECC211519C34D6C00B5FFD8 /* IBeaconStatistics.m in Sources */,
 				EE228CB5194FC2BD00475240 /* UploadManager.m in Sources */,
+				EE64E91E19BE34F900F4F7D6 /* ConfigValidator.m in Sources */,
 				EE228CB2194F743200475240 /* DataLogger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

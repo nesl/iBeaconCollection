@@ -1,6 +1,29 @@
 var http = require("http");
 var url = require("url");
 
+function getDateTime() {
+	    var date = new Date();
+
+	    var hour = date.getHours();
+	    hour = (hour < 10 ? "0" : "") + hour;
+
+	    var min  = date.getMinutes();
+	    min = (min < 10 ? "0" : "") + min;
+
+	    var sec  = date.getSeconds();
+	    sec = (sec < 10 ? "0" : "") + sec;
+
+	    var year = date.getFullYear();
+
+	    var month = date.getMonth() + 1;
+	    month = (month < 10 ? "0" : "") + month;
+
+	    var day  = date.getDate();
+	    day = (day < 10 ? "0" : "") + day;
+
+	    return "[" + year + "/" + month + "/" + day + "-" + hour + ":" + min + ":" + sec + "] ";
+}
+
 function start() {
 	function onRequest(request, response) {
 		var pathname = url.parse(request.url).pathname;
@@ -10,7 +33,7 @@ function start() {
 		
 		if (pathname.substring(0, 2) == "/c") {
 			var id = pathname.substring(2);
-			console.log("in connection: " + id);
+			console.log(getDateTime() + "in connection: " + id);
 			var fs = require('fs');
 			fs.readFile('./config/' + id, function (err, html) {
 				if (err) {
@@ -47,10 +70,10 @@ function start() {
 				var pathname = "./upload/" + id + "/" + fname;
 				fs.writeFile("./upload/" + id + "/" + fname, body, function(err) {
 					if(err) {
-						console.log("save file error");
+						console.log(getDateTime() + "save file error");
 						console.log(err);
 					} else {
-						console.log("The file was saved!");
+						console.log(getDateTime() + "The file was saved!");
 					}
 				}); 
 			});
