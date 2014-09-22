@@ -1,15 +1,16 @@
 The whole system consists two parts: client side and server side. The client side is this iBeaconCollection app for iPhone/iPod, after collecting iBeacon data, they try to upload back to server easily run by Node.js. Before you start launch the iBeaconCollect app, create a configuration file for the device.
 
-1. The whole web server is in the folder called web. Simply type command <b>"node index.js"</b> should work.
-2. Under folder web, there are two important folders: upload and config. I put a sample configuration file in the folder config, but the format is below:
-&lt;metadata&gt;
-Txuuid
-Txmajor
-Txminor
-Rxuuid Rxmajor Rxminor1
-Rxuuid Rxmajor Rxminor2
-...
-Rxuuid Rxmajor RxminorN
+* The whole web server is in the folder called web. Simply type command *"node index.js"* should work.
+* Under folder web, there are two important folders: upload and config. I put a sample configuration file in the folder config, but the format is below:
+  * &lt;metadata&gt;
+
+> Txuuid
+> Txmajor
+> Txminor
+> Rxuuid Rxmajor Rxminor1
+> Rxuuid Rxmajor Rxminor2
+> ...
+> Rxuuid Rxmajor RxminorN
 
 Metadata is presettings. All the metadata flag begin with an underscope. Currently supported metadata flags are:
 _txdisable: begin the app with TX disabled. (default is enabled)
