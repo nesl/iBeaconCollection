@@ -12,14 +12,13 @@ The whole system consists two parts: client side and server side. The client sid
 > ...<br/>
 > Rxuuid Rxmajor RxminorN<br/>
 
-Metadata is presettings. All the metadata flag begin with an underscope. Currently supported metadata flags are:
-_txdisable: begin the app with TX disabled. (default is enabled)
-_rxdisable: begin the app with RX disabled. (default is enabled)
-_autoupload: begin the app with auto upload option enabled (default is disabled)
-_manuallyflip: the statistics of beacons are fixed unless you touch the screen (default is changing the screen every 3 seconds)
+* Metadata is presettings. All the metadata flag begin with an underscope. Currently supported metadata flags are:
+  * _txdisable: begin the app with TX disabled. (default is enabled)<br/>
+  * _rxdisable: begin the app with RX disabled. (default is enabled)<br/>
+  * _autoupload: begin the app with auto upload option enabled (default is disabled)
+  * _manuallyflip: the statistics of beacons are fixed unless you touch the screen (default is changing the screen every 3 seconds)
 
-Rxmajor and Rxminor can be -1, which means don't care.
-
-3. The configuration file name is linked to the device name, and thus should be numbers only.
-4. The collected data will be uploaded to folder upload, packed by device nane.
-5. Launch the app and have fun!
+* Rxmajor and Rxminor can be -1, which means don't care.
+* The configuration file name is linked to the device name, and thus should be numbers only.
+* The collected data will be uploaded to folder upload, packed by device nane.
+* Launch the app and have fun!
